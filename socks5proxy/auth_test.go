@@ -68,3 +68,8 @@ func TestParseDomain(t *testing.T) {
 		fmt.Println(ptrvalue)
 	}
 }
+func TestT(t *testing.T) {
+	port := 3213
+	i := [2]byte{byte(port >> 8), byte(port & 0xff)}
+	fmt.Printf("%x", i)
+}

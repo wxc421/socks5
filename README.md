@@ -60,23 +60,26 @@ curl --proxy socks5://127.0.0.1:8080 www.baidu.com  -v
 
 
 
+## TODO
 
+- [ ] socks5通道数据加密(需要写一个客户端)
+- [ ] 采用zap或者其他日志库
+- [ ] 日志进mongodb
+- [ ] client连接池
+- [ ] 从命令行读取参数
+- [ ] makefile
 
+## 参考链接
 
+[用Go实现TCP连接的双向拷贝](https://zhuanlan.zhihu.com/p/29657180)
 
+[Go语言手写SOCKS5服务器](https://www.bilibili.com/video/BV15Y411c7SU)
 
+[github开源socks5项目](https://github.com/shikanon/socks5proxy)
 
+[理解socks5协议的工作过程和协议细节](https://wiyi.org/socks5-protocol-in-deep.html)
 
-
-
-
-
-
-
-
-
-
-
+[socks5协议原理学习](https://cloud.tencent.com/developer/article/1802233)
 
 
 
