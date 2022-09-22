@@ -2,6 +2,7 @@ package socks5proxy
 
 import (
 	"bufio"
+	"crypto/tls"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -146,6 +147,44 @@ func (s *SOCKS5Context) error(replyCode byte) error {
 func (s *SOCKS5Server) Run() error {
 	address := fmt.Sprintf("%s:%d", s.IP, s.Port)
 	listener, err := net.Listen("tcp", address)
+	log.Println("server start")
+	if err != nil {
+		return err
+	}
+	var cid uint = 0
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Printf("connection failure from %s: %s", conn.RemoteAddr(), err)
+			continue
+		}
+		socks5Context := &SOCKS5Context{
+			conn:      conn,
+			cid:       cid,
+			closeChan: make(chan struct{}, 1),
+		}
+		cid++
+		log.Printf("Client connects to server %v\n", socks5Context.cid)
+		go func(socks5Context *SOCKS5Context) {
+			err := s.handle(socks5Context)
+			if err != nil {
+				log.Println(socks5Context.cid, " handle connection failure")
+			}
+		}(socks5Context)
+	}
+}
+
+func (s *SOCKS5Server) RunTLS() error {
+	crt, err := tls.LoadX509KeyPair("server.crt", "server.key")
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{crt},
+	}
+	address := fmt.Sprintf("%s:%d", s.IP, s.Port)
+	// listener, err := net.Listen("tcp", address)
+	listener, err := tls.Listen("tcp", address, tlsConfig)
 	log.Println("server start")
 	if err != nil {
 		return err
